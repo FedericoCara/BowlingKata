@@ -67,14 +67,78 @@ public class BowlingBoardShould
     public void SumPairsWithSpare()
     {
         //Given
-        string points = "7/ 7/ 7/ 7/ 7/ 7/ 7/ 7/ 7/ 7/";
+        string points = "7/ 7/ 7/ 7/ 7/ 7/ 7/ 7/ 7/ 7/7";
         //When
         int totalPoints = BowlingBoard.CalculateScore(points);
         //Then
-        Assert.AreEqual(140, totalPoints);
+        Assert.AreEqual(170, totalPoints);
     }
 
-   
+    [Test]
+    public void SumPairsWithSpareWithDifferentNumbers()
+    {
+        //Given
+        string points = "7/ 3/ 6/ 2/ 1/ -/ 9/ 8/ 6/ 3/5";
+        //When
+        int totalPoints = BowlingBoard.CalculateScore(points);
+        //Then
+        Assert.AreEqual(143, totalPoints);
+    }
+
+    [Test]
+    public void SumPairsWithMissAndDifferentNumbers()
+    {
+        //Given
+        string points = "5- -3 5- 6- -8 9- 3- 5- -3 --";
+        //When
+        int totalPoints = BowlingBoard.CalculateScore(points);
+        //Then
+        Assert.AreEqual(47, totalPoints);
+    }
+
+    [Test]
+    public void SumPairsWithMissDifferentNumbersAndStrikeInTheEnd()
+    {
+        //Given
+        string points = "5- -3 X 6- X X 3- 5- -3 X 4 2";
+        //When
+        int totalPoints = BowlingBoard.CalculateScore(points);
+        //Then
+        Assert.AreEqual(93, totalPoints);
+    }
+
+    [Test]
+    public void SumPairsWithMissDifferentNumbersAndStrikes()
+    {
+        //Given
+        string points = "5- -3 X 6- X X 3- 5- -3 6-";
+        //When
+        int totalPoints = BowlingBoard.CalculateScore(points);
+        //Then
+        Assert.AreEqual(83, totalPoints);
+    }
+
+    [Test]
+    public void SumPairsWithMissDifferentNumbersStrikesAndSpares()
+    {
+        //Given
+        string points = "5/ -3 X 6/ X X 3- 5/ -3 6-";
+        //When
+        int totalPoints = BowlingBoard.CalculateScore(points);
+        //Then
+        Assert.AreEqual(111, totalPoints);
+    }
+
+    [Test]
+    public void SumPairsWithMissDifferentNumbersStrikesSparesAndTwoNumbersPair()
+    {
+        //Given
+        string points = "5/ 53 X 6/ X X 3- 5/ 23 6-";
+        //When
+        int totalPoints = BowlingBoard.CalculateScore(points);
+        //Then
+        Assert.AreEqual(125, totalPoints);
+    }
 
 }
 
@@ -90,13 +154,61 @@ public class BowlingBoard
 
         int scored = 0;
 
+        int prevScore = 0;
+
         for (int i = 0; i < 10; i++)
         {
             string frame = frameList[i];
 
             if(frame == "X")
             {
-                totalPoints += 30;
+                totalPoints += 10;
+
+                var nextFrame = frameList[i + 1];
+                var afterNextFrame = frameList[i + 2];
+
+                if(nextFrame == "X")
+                {
+                    totalPoints += 10;
+
+                    if(afterNextFrame == "X")
+                    {
+                        totalPoints += 10;
+                    }
+                    else if (int.TryParse(afterNextFrame[0].ToString(), out scored))
+                    {
+                        totalPoints += scored;
+
+                    }
+                }
+                else
+                {
+
+
+                    if (int.TryParse(nextFrame[0].ToString(), out prevScore))
+                    {
+                        totalPoints += prevScore;
+                    }
+
+
+                    if(i < 9)
+                    {
+                        if (int.TryParse(nextFrame[1].ToString(), out scored))
+                        {
+                            totalPoints += scored;
+                        }
+                        else if(nextFrame[1].ToString() == "/")
+                        {
+                            totalPoints += 10 - prevScore;
+                        }
+                    }
+                    else if(int.TryParse(afterNextFrame[0].ToString(), out scored))
+                    {
+                            totalPoints += scored;
+                    }
+                }
+
+
             }
             else
             {
@@ -104,7 +216,35 @@ public class BowlingBoard
                 {
                     if (frame[1].ToString() == "/")
                     {
-                        totalPoints += int.Parse(frame[0].ToString()) * 2;
+
+                        totalPoints += 10;
+
+                        if (i < 9)
+                        {
+                            var nextFrame = frameList[i + 1];
+
+                            if (int.TryParse(nextFrame[0].ToString(), out scored))
+                            {
+                                totalPoints += scored;
+                            }
+                            else if(nextFrame == "X")
+                            {
+                                totalPoints += 10;
+                            }
+                        }
+                        else
+                        {
+
+                            if(int.TryParse(frame[2].ToString(), out scored))
+                            {
+                                totalPoints += scored;
+                            }
+                            else if (frame == "X")
+                            {
+                                totalPoints += 10;
+                            }
+                        }
+
                         break;
                     }
                     else if(int.TryParse(frame[j].ToString(), out scored))
