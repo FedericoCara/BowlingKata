@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -140,124 +139,14 @@ public class BowlingBoardShould
         Assert.AreEqual(125, totalPoints);
     }
 
-}
-
-
-public class BowlingBoard
-{
-    public static int CalculateScore(string points)
-    {
-
-        List<string> frameList = new List<string>(points.Split(' ')); 
-
-        int totalPoints = 0;
-
-        int scored = 0;
-
-        int prevScore = 0;
-
-        for (int i = 0; i < 10; i++)
-        {
-            string frame = frameList[i];
-
-            if(frame == "X")
-            {
-                totalPoints += 10;
-
-                var nextFrame = frameList[i + 1];
-                var afterNextFrame = frameList[i + 2];
-
-                if(nextFrame == "X")
-                {
-                    totalPoints += 10;
-
-                    if(afterNextFrame == "X")
-                    {
-                        totalPoints += 10;
-                    }
-                    else if (int.TryParse(afterNextFrame[0].ToString(), out scored))
-                    {
-                        totalPoints += scored;
-
-                    }
-                }
-                else
-                {
-
-
-                    if (int.TryParse(nextFrame[0].ToString(), out prevScore))
-                    {
-                        totalPoints += prevScore;
-                    }
-
-
-                    if(i < 9)
-                    {
-                        if (int.TryParse(nextFrame[1].ToString(), out scored))
-                        {
-                            totalPoints += scored;
-                        }
-                        else if(nextFrame[1].ToString() == "/")
-                        {
-                            totalPoints += 10 - prevScore;
-                        }
-                    }
-                    else if(int.TryParse(afterNextFrame[0].ToString(), out scored))
-                    {
-                            totalPoints += scored;
-                    }
-                }
-
-
-            }
-            else
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    if (frame[1].ToString() == "/")
-                    {
-
-                        totalPoints += 10;
-
-                        if (i < 9)
-                        {
-                            var nextFrame = frameList[i + 1];
-
-                            if (int.TryParse(nextFrame[0].ToString(), out scored))
-                            {
-                                totalPoints += scored;
-                            }
-                            else if(nextFrame == "X")
-                            {
-                                totalPoints += 10;
-                            }
-                        }
-                        else
-                        {
-
-                            if(int.TryParse(frame[2].ToString(), out scored))
-                            {
-                                totalPoints += scored;
-                            }
-                            else if (frame == "X")
-                            {
-                                totalPoints += 10;
-                            }
-                        }
-
-                        break;
-                    }
-                    else if(int.TryParse(frame[j].ToString(), out scored))
-                    {
-                        totalPoints += scored;
-                    }
-                }
-                             
-            }    
-
-        }
-
-
-        return totalPoints;
+    [Test]
+    public void SumPairsWithMissDifferentNumbersAndStrikeAndSpareInTheEnd() {
+        //Given
+        string points = "7/ X 6- -- 9/ 11 11 11 11 X 8 /";
+        //When
+        int totalPoints = BowlingBoard.CalculateScore(points);
+        //Then
+        Assert.AreEqual(81, totalPoints);
     }
+
 }
