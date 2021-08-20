@@ -11,6 +11,12 @@ public class BowlingView : MonoBehaviour
     [SerializeField]
     private Text totalPointsTxt;
 
+    private void Update() {
+        if (Input.GetKeyUp(KeyCode.Escape)) {
+            Application.Quit();
+        }
+    }
+
     public void CalculateTotalPoints() 
     {
         string pointsString = "";
